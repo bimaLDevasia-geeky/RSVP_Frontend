@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Auth } from '../../../../core/auth/auth';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-user-login',
@@ -15,7 +15,7 @@ loginForm!: FormGroup;
 
 constructor(
     private fb: FormBuilder,        
-    private authService: Auth,
+    private authService: AuthService,
     private router: Router
   ) {}
   
@@ -30,11 +30,11 @@ constructor(
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
-        next: (response) => {
+        next: (response:unknown) => {
           console.log('Login successful', response);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/']);
         },
-        error: (error) => {
+        error: (error:unknown) => {
           console.error('Login failed', error);
         }
       });

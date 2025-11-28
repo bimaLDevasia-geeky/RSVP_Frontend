@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Auth } from '../../../../core/auth/auth';
+import { AuthService } from   '../../../../core/auth/services/auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-user-register',
@@ -11,7 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 
 export class UserRegister {
-  constructor(private authService: Auth, private fb: FormBuilder,private router: Router) {}
+  constructor(private authService: AuthService, private fb: FormBuilder,private router: Router) {}
 
   registerForm!: FormGroup;
 
@@ -28,15 +29,15 @@ export class UserRegister {
   onSubmit(): void {
     if (this.registerForm.valid) {
       const { name, email, password } = this.registerForm.value;
-      // this.authService.register(name, email, password).subscribe({
-      //   next: (response) => {
-      //     console.log('Registration successful', response);
-      //     this.router.navigate(['/login']);
-      //   },
-      //   error: (error) => {
-      //     console.error('Registration failed', error);
-      //   }
-      // });
+      this.authService.register(name, email, password).subscribe({
+        next: (response) => {
+          console.log('Registration successful', response);
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Registration failed', error);
+        }
+      });
 
       console.log('Registration form submitted', { name, email, password });
       

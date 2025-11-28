@@ -29,7 +29,17 @@ export class AuthService {
   register(name:string,email: string, password: string) {
     return this.http.post<{ token: string }>(`${environment.apiUrl}/user`, { name, email, password });
   }
- 
+  
+  public login(email: string, password: string) {
+    return this.http.post<{ token: string }>(`${environment.apiUrl}/auth/login`, { email, password }, { withCredentials: true }).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.token);
+        this.currentUser.next(this.getCurrentUser());
+        this.refreshToken.next(null);
+      }));
+  }
+
+
   refresh(){
     return this.http.post<{token:string;}>(`${environment.apiUrl}/refresh`,{},{withCredentials:true}).pipe(
       tap(response=>{
@@ -53,10 +63,10 @@ export class AuthService {
     this.refreshToken.next(token);
     }
 
-  getCurrentUser() {
+  getCurrentUser(): User | null {
     let token = this.getAccessToken();
     if (!token) {
-      return ;
+      return null;
     }
     
     try {
@@ -71,7 +81,7 @@ export class AuthService {
       return user;
     } catch (error) {
       console.error('Error decoding token:', error);
-      return ;
+      return null;
     }
   }
 

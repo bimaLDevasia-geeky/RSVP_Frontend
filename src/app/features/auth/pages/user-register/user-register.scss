@@ -320,7 +320,6 @@ $input-bg: #f8fafc;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-//   box-shadow: 0 4px 20px rgba(0, 213, 99, 0.4);
   position: relative;
   overflow: hidden;
   
@@ -337,7 +336,6 @@ $input-bg: #f8fafc;
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    // box-shadow: 0 8px 28px rgba(0, 213, 99, 0.5);
     
     &::before {
       left: 100%;

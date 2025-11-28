@@ -12,6 +12,11 @@ export const routes: Routes = [
   },
 
   {
+    path: 'register',
+    loadComponent: () => import('./features/auth/pages/user-register/user-register').then((m) => m.UserRegister),
+  },
+
+  {
     path: 'admin',
     loadComponent: () =>
       import('./core/layouts/admin-layout/admin-layout').then((m) => m.AdminLayout),

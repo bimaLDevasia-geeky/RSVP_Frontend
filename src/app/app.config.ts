@@ -2,7 +2,9 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHotToastConfig } from '@ngxpert/hot-toast';
+import { authInterceptor } from './core/auth/interceptors/authInterceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -10,6 +12,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient()
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
+    provideHotToastConfig(
+      {position: 'top-right', duration: 3000}
+    )
   ]
 };

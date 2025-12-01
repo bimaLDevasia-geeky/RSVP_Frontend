@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-user-login',
@@ -12,6 +13,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
 export class UserLogin {
 
 loginForm!: FormGroup;
+toastservice=inject(HotToastService);
 
 constructor(
     private fb: FormBuilder,        
@@ -33,6 +35,7 @@ constructor(
         next: (response:unknown) => {
           console.log('Login successful', response);
           this.router.navigate(['/']);
+          this.toastservice.success('Login Successful!');
         },
         error: (error:unknown) => {
           console.error('Login failed', error);

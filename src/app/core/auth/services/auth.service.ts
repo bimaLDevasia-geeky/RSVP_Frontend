@@ -41,7 +41,7 @@ export class AuthService {
 
 
   refresh(){
-    return this.http.post<{token:string;}>(`${environment.apiUrl}/refresh`,{},{withCredentials:true}).pipe(
+    return this.http.post<{token:string;}>(`${environment.apiUrl}/auth/refresh`,{},{withCredentials:true}).pipe(
       tap(response=>{
         localStorage.setItem('token',response.token);
         this.currentUser.next(this.getCurrentUser() || null);
@@ -95,7 +95,7 @@ export class AuthService {
     localStorage.removeItem('token');
     this.currentUser.next(null);
     this.refreshToken.next(null);
-    this.http.post(`${environment.apiUrl}/logout`,{},{withCredentials:true}).subscribe();
+    this.http.post(`${environment.apiUrl}/auth/logout`,{},{withCredentials:true}).subscribe();
   }
 
 

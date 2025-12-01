@@ -3,9 +3,8 @@ import { inject } from "@angular/core";
 import { AuthService } from "../services/auth.service";
 import { catchError, filter,  switchMap, take, throwError } from "rxjs";
 
-const authService =inject(AuthService);
-
 export const authInterceptor:HttpInterceptorFn = (req,next) => {
+    const authService = inject(AuthService);
     const token = authService.getAccessToken();
 
 

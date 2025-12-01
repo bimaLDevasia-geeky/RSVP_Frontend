@@ -10,6 +10,9 @@ export class TimeonlyPipe implements PipeTransform {
     let arr = value.split(":");
     if(Number(arr[0])>=12){
       let hour = Number(arr[0]) - 12;
+      if(hour===0){
+        hour = 12;
+      }
       let ampm = "PM";
       return `${hour}:${arr[1]} ${ampm}`;
     }

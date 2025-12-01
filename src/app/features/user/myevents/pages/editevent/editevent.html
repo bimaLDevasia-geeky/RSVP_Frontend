@@ -1,0 +1,178 @@
+<div class="edit-event-container">
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading event...</p>
+    </div>
+  } @else {
+    <div class="form-header">
+      <h1>Edit Event</h1>
+      <button class="cancel-btn" (click)="cancel()">Cancel</button>
+    </div>
+
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+      <div class="form-grid">
+        <!-- Left Column: Form Fields -->
+        <div class="form-column">
+          <div class="form-group">
+            <label for="name">Event Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name"
+              placeholder="Enter event name"
+            />
+            @if (eventForm.get('name')?.invalid && eventForm.get('name')?.touched) {
+              <span class="error">Event name is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea 
+              id="description" 
+              formControlName="description"
+              rows="5"
+              placeholder="Describe your event"
+            ></textarea>
+            @if (eventForm.get('description')?.invalid && eventForm.get('description')?.touched) {
+              <span class="error">Description is required</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Date *</label>
+              <input 
+                type="date" 
+                id="date" 
+                formControlName="date"
+              />
+              @if (eventForm.get('date')?.invalid && eventForm.get('date')?.touched) {
+                <span class="error">Date is required</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="time">Time *</label>
+              <input 
+                type="time" 
+                id="time" 
+                formControlName="time"
+              />
+              @if (eventForm.get('time')?.invalid && eventForm.get('time')?.touched) {
+                <span class="error">Time is required</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="venue">Venue *</label>
+            <input 
+              type="text" 
+              id="venue" 
+              formControlName="venue"
+              placeholder="Event location"
+            />
+            @if (eventForm.get('venue')?.invalid && eventForm.get('venue')?.touched) {
+              <span class="error">Venue is required</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="status">Status *</label>
+              <select id="status" formControlName="status">
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label>
+                <input type="checkbox" formControlName="isPublic" />
+                <span>Public Event</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="submit-btn"
+              [disabled]="isSubmitting() || eventForm.invalid">
+              {{ isSubmitting() ? 'Updating...' : 'Update Event' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Image Management -->
+        <div class="image-column">
+          <h3>Event Images</h3>
+          
+          <!-- Existing Images -->
+          @if (existingImages().length > 0) {
+            <div class="section">
+              <h4>Current Images</h4>
+              <div class="image-grid">
+                @for (image of existingImages(); track image.id) {
+                  <div class="image-card">
+                    <img [src]="image.url" alt="Event image" />
+                    <button 
+                      type="button" 
+                      class="remove-btn"
+                      (click)="markExistingImageForDeletion(image)">
+                      ✕
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (imagesToDelete().length > 0) {
+            <div class="delete-notice">
+              {{ imagesToDelete().length }} image(s) will be deleted on update
+            </div>
+          }
+
+          <!-- New Images -->
+          <div class="section">
+            <h4>Add New Images</h4>
+            <div class="upload-area">
+              <label for="newImages" class="upload-label">
+                <span class="upload-icon">📷</span>
+                <span>Click to select images</span>
+                <input 
+                  type="file" 
+                  id="newImages"
+                  accept="image/*"
+                  multiple
+                  (change)="onNewImagesSelected($event)"
+                  style="display: none;"
+                />
+              </label>
+            </div>
+
+            @if (newImagePreviews().length > 0) {
+              <div class="image-grid">
+                @for (preview of newImagePreviews(); track $index) {
+                  <div class="image-card">
+                    <img [src]="preview.preview" alt="New image" />
+                    <button 
+                      type="button" 
+                      class="remove-btn"
+                      (click)="removeNewImage($index)">
+                      ✕
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</div>

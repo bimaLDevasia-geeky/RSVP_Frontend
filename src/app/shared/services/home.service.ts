@@ -1,0 +1,20 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HomeService {
+  
+
+  constructor(private http: HttpClient) {}
+
+
+  getUserData(id: number){
+    return this.http.get(`${environment.apiUrl}/user/${id}`,{withCredentials:true});
+  }
+
+
+
+}

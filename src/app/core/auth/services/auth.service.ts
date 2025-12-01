@@ -73,7 +73,7 @@ export class AuthService {
       const decoded = jwtDecode<jwtValues>(token);
       
       const user: User = {
-        id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
+        id: Number(decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']) ,
         email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
         role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
       };
@@ -99,8 +99,28 @@ export class AuthService {
   }
 
 
+  isUser(): boolean {
+    if (this.currentUser.value?.role === 'User') {
+      return true;
+    }
+    return false;
+  }
 
+  isAdmin(): boolean {
+    if (this.currentUser.value?.role === 'Admin') {
+      return true;
+    }
+    return false;
+  }
 
-  
+  isLoggedIn(): boolean {
+    
+    if(this.currentUser.value===null)
+      return false;
+    else
+      return true;
+  }
+
+ 
 
 }

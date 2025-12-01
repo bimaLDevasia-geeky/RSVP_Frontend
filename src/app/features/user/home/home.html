@@ -1,1 +1,125 @@
-<p>home works!</p>
+
+<div class="home-container">
+  <div class="dashboard-grid">
+    <!-- Welcome -->
+    <div class="dashboard-card welcome-card">
+      <div class="welcome-content">
+        <h1 class="welcome-title">Welcome back, {{ userName() }}!</h1>
+        <p class="welcome-subtitle"></p>
+      </div>
+    </div>
+
+    <!-- Invited Events -->
+    <div class="dashboard-card invited-events-card">
+      <div class="card-header">
+        <h2>Event Invitations</h2>
+        <span class="badge">{{invitedEvents().length}}</span>
+      </div>
+      <div class="card-content scrollable">
+        @if (invitedEvents().length === 0) {
+          <div class="empty-state">
+            <p>No invitations</p>
+          </div>
+        }
+        @for (item of invitedEvents(); track $index) {
+          <div class="invitation-item">
+            <div class="invitation-header" routerLink="/user/event/{{item.id}}">
+              <div class="event-info">
+                <h3 class="event-name">{{item.name}}</h3>
+                <span class="event-date">{{item.date | date: 'medium'}}</span>
+              </div>
+              <span class="status-badge" [class]="'status-' + (item.myResponseStatus || 'NoResponse').toLowerCase()">
+                {{item.myResponseStatus === 'NoResponse' || !item.myResponseStatus ? 'Pending' : item.myResponseStatus === 'NotAttending' ? 'Not Attending' : item.myResponseStatus}}
+              </span>
+            </div>
+            @if (item.myResponseStatus === "NoResponse") {
+              <div class="invitation-actions">
+                <button class="btn-action btn-accept" (click)="updateInvitationStatus(item.attendieId, 'Attending')">
+                  Attending
+                </button>
+                <button class="btn-action btn-maybe" (click)="updateInvitationStatus(item.attendieId, 'Maybe')">
+                  Maybe
+                </button>
+                <button class="btn-action btn-decline" (click)="updateInvitationStatus(item.attendieId, 'NotAttending')">
+                  Not Attending
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="dashboard-card notifications-card">
+      <div class="card-header">
+        <h2>Notifications</h2>
+        <span class="badge">{{notifications().length}}</span>
+      </div>
+      <div class="card-content scrollable">
+        @if (notifications().length === 0) {
+          <div class="empty-state">
+            <p>No notifications yet</p>
+          </div>
+        }
+        @for (item of notifications(); track $index) {
+          <div class="notification-item" [routerLink]="item.route">
+            <div class="notification-content">
+              <p class="notification-text">{{item.description}}</p>
+              <span class="notification-time">{{item.createdAt | date: 'short'}}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- My Events  -->
+    <div class="dashboard-card created-events-card">
+      <div class="card-header">
+        <h2>My Events</h2>
+        <span class="badge">{{createdEvents().length}}</span>
+      </div>
+      <div class="card-content scrollable">
+        @if (createdEvents().length === 0) {
+          <div class="empty-state">
+            <p>No events created yet</p>
+            <button class="btn-create">Create Event</button>
+          </div>
+        }
+        @for (item of createdEvents(); track $index) {
+          <div class="event-item" routerLink="/user/event/{{item.id}}">
+            <div class="event-info">
+              <h3 class="event-name">{{item.name}}</h3>
+              <span class="event-date">{{item.date | date: 'medium'}}</span>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Organizing Events  -->
+    <div class="dashboard-card organized-events-card">
+      <div class="card-header">
+        <h2>Organizing Events</h2>
+        <span class="badge">{{organizedEvents().length}}</span>
+      </div>
+      <div class="card-content scrollable">
+        @if (organizedEvents().length === 0) {
+          <div class="empty-state">
+            <p>No organized events</p>
+          </div>
+        }
+        @for (item of organizedEvents(); track $index) {
+          <div class="event-item" routerLink="/user/event/{{item.id}}">
+            <div class="event-info">
+              <h3 class="event-name">{{item.name}}</h3>
+              <span class="event-date">{{item.date | date: 'medium'}}</span>
+            </div>
+            <span class="arrow">→</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

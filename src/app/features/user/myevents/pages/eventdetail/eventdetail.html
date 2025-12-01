@@ -1,0 +1,253 @@
+<div class="event-detail-container">
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading event details...</p>
+    </div>
+  } @else if (eventDetail()) {
+    <!-- Hero Image Section -->
+    @if (eventDetail()!.media.length > 0) {
+      <div class="hero-section">
+        <div class="hero-image">
+          <img [src]="eventDetail()!.media[selectedImageIndex()].url" [alt]="eventDetail()!.name" />
+        </div>
+        
+        <!-- Thumbnail Strip -->
+        @if (eventDetail()!.media.length > 1) {
+          <div class="thumbnail-strip">
+            <div class="thumbnail-container">
+              @for (image of eventDetail()!.media; track image.id; let i = $index) {
+                <div 
+                  class="thumbnail" 
+                  [class.active]="i === selectedImageIndex()"
+                  (click)="selectImage(i)">
+                  <img [src]="image.url" [alt]="eventDetail()!.name" />
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Action Header -->
+    <div class="detail-header">
+      <button class="back-btn" (click)="goBack()">
+        <span>←</span> Back to Events
+      </button>
+      <button class="edit-btn" (click)="editEvent()">
+        Edit Event
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Event Details Section -->
+      <div class="details-section">
+        <!-- Left Column: Event Info & Description -->
+        <div class="event-details-left">
+          <div class="event-header">
+            <h1>{{ eventDetail()!.name }}</h1>
+            <span class="status-badge" [attr.data-status]="eventDetail()!.status">
+              {{ eventDetail()!.status }}
+            </span>
+          </div>
+
+          <div class="event-meta-grid">
+            <div class="meta-card">
+              <span class="icon">📅</span>
+              <div class="meta-content">
+                <span class="label">Date</span>
+                <span class="value">{{ eventDetail()!.date | date: 'fullDate' }}</span>
+              </div>
+            </div>
+            
+            <div class="meta-card">
+              <span class="icon">⏰</span>
+              <div class="meta-content">
+                <span class="label">Time</span>
+                <span class="value">{{ eventDetail()!.time | timeonly}}</span>
+              </div>
+            </div>
+            
+            <div class="meta-card">
+              <span class="icon">📍</span>
+              <div class="meta-content">
+                <span class="label">Venue</span>
+                <span class="value">{{ eventDetail()!.venue }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="description-card">
+            <h3>About this Event</h3>
+            <p>{{ eventDetail()!.description }}</p>
+          </div>
+        </div>
+
+        <!-- Right Column: Invite & Guest Management -->
+        <div class="event-details-right">
+          <div class="invite-section">
+            <h3>Share this Event</h3>
+            
+            <div class="invite-item">
+              <label>Invite Link</label>
+              <div class="invite-display">
+                <input 
+                  type="text" 
+                  [value]="inviteUrl()" 
+                  readonly 
+                  class="invite-input"
+                />
+                <button (click)="copyInviteUrl()" class="copy-btn">
+                  Copy
+                </button>
+              </div>
+            </div>
+            
+            <div class="invite-item">
+              <label>Invite Code</label>
+              <div class="invite-display">
+                <code class="invite-code">{{ eventDetail()!.inviteCode }}</code>
+                <button (click)="copyInviteCode()" class="copy-btn">
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="guest-management-section">
+            <div class="section-header">
+              <h3>Add Guests</h3>
+              <button 
+                class="toggle-search-btn" 
+                (click)="showGuestSearch.set(!showGuestSearch())">
+                {{ showGuestSearch() ? 'Cancel' : '+ Add' }}
+              </button>
+            </div>
+
+            @if (showGuestSearch()) {
+              <div class="guest-search">
+                <input 
+                  type="text" 
+                  class="search-input"
+                  placeholder="Search by name or email..."
+                  [value]="searchTerm()"
+                  (input)="searchTerm.set($any($event.target).value); searchGuests()"
+                />
+
+                @if (isSearching()) {
+                  <div class="search-loading">Searching...</div>
+                }
+
+                @if (searchResults().length > 0) {
+                  <div class="search-results">
+                    @for (guest of searchResults(); track guest.id) {
+                      <div class="guest-result">
+                        <div class="guest-info">
+                          <span class="name">{{ guest.name }}</span>
+                          <span class="email">{{ guest.email }}</span>
+                        </div>
+                        <button 
+                          class="add-guest-btn"
+                          (click)="addGuest(guest.id)"
+                          [disabled]="isAddingGuest(guest.id)">
+                          {{ isAddingGuest(guest.id) ? 'Adding...' : 'Add' }}
+                        </button>
+                      </div>
+                    }
+                  </div>
+                } @else if (searchTerm().length >= 2 && !isSearching()) {
+                  <p class="empty-message">No users found</p>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendees Section - Full Width Bottom -->
+      <div class="attendees-section">
+        <div class="attendees-list-card">
+          <div class="attendees-header">
+            <div class="header-top">
+              <h3>Attendees ({{ filteredAttendees().length }})</h3>
+              <div class="rsvp-stats-inline">
+                <div class="stat-item attending">
+                  <span class="count">{{ attendingCount() }}</span>
+                  <span class="label">Attending</span>
+                </div>
+                <div class="stat-item maybe">
+                  <span class="count">{{ maybeCount() }}</span>
+                  <span class="label">Maybe</span>
+                </div>
+                <div class="stat-item not-attending">
+                  <span class="count">{{ notAttendingCount() }}</span>
+                  <span class="label">Not Attending</span>
+                </div>
+                <div class="stat-item no-response">
+                  <span class="count">{{ noResponseCount() }}</span>
+                  <span class="label">No Response</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-tabs">
+              <button 
+                class="filter-tab" 
+                [class.active]="statusFilter() === 'All'"
+                (click)="setStatusFilter('All')">
+                All
+              </button>
+              <button 
+                class="filter-tab" 
+                [class.active]="statusFilter() === 'Attending'"
+                (click)="setStatusFilter('Attending')">
+                Attending
+              </button>
+              <button 
+                class="filter-tab" 
+                [class.active]="statusFilter() === 'Maybe'"
+                (click)="setStatusFilter('Maybe')">
+                Maybe
+              </button>
+              <button 
+                class="filter-tab" 
+                [class.active]="statusFilter() === 'NotAttending'"
+                (click)="setStatusFilter('NotAttending')">
+                Not Attending
+              </button>
+              <button 
+                class="filter-tab" 
+                [class.active]="statusFilter() === 'NoResponse'"
+                (click)="setStatusFilter('NoResponse')">
+                No Response
+              </button>
+            </div>
+          </div>
+
+          @if (filteredAttendees().length > 0) {
+            <div class="attendees-list">
+              @for (attendee of filteredAttendees(); track attendee.id) {
+                <div class="attendee-item" (click)="viewAttendee(attendee.id)">
+                  <div class="attendee-info">
+                    <span class="name">{{ attendee.name }}</span>
+                    <span class="email">{{ attendee.email }}</span>
+                  </div>
+                  <div class="attendee-status">
+                    <span class="rsvp-badge" [attr.data-status]="attendee.status">
+                      {{ attendee.status }}
+                    </span>
+                    
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-message">No attendees match this filter</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

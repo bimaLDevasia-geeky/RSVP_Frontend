@@ -30,6 +30,14 @@ export interface Event {
   isPublic: boolean;
   status: string;   
   attendieId: number;
-  myRole: 'Organizer' | 'Guest' | 'Owner' ;
+  myRole: 'Organizer' | 'Guest' | 'Owner' | null;
   myResponseStatus: 'Attending' | 'NotAttending' | 'Maybe' | 'NoResponse' | null;
+  creatorName?: string;
+  media?: EventMedia[];
+  isAttendee: boolean;
+}
+
+export interface EventMedia {
+  id: number;
+  url: string;
 }

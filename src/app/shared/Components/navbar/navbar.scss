@@ -92,17 +92,7 @@ $hover-bg: #f8fafc;
     color: $primary-green;
     background: rgba(0, 213, 99, 0.1);
     
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 3px;
-      background: linear-gradient(135deg, $primary-green 0%, $vibrant-green 100%);
-      border-radius: 2px;
-    }
+    
   }
 }
 

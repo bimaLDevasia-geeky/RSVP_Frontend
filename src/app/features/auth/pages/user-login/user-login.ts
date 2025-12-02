@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 
@@ -14,12 +14,19 @@ export class UserLogin {
 
 loginForm!: FormGroup;
 toastservice=inject(HotToastService);
+returnUrl: string;
 
 constructor(
     private fb: FormBuilder,        
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('return') || '/';
+  }
+
+
+
   
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -34,7 +41,7 @@ constructor(
       this.authService.login(email, password).subscribe({
         next: (response:unknown) => {
           console.log('Login successful', response);
-          this.router.navigate(['/']);
+          this.router.navigate([this.returnUrl]);
           this.toastservice.success('Login Successful!');
         },
         error: (error:unknown) => {

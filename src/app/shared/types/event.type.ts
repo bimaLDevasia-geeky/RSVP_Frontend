@@ -128,5 +128,5 @@ export interface InvitedEventDto {
     isPublic: boolean;
     inviteCode: string;
     media: EventImageDto[];
-    status: 'Attending' | 'Maybe' | 'NotAttending' | 'NoResponse';
+    
 }

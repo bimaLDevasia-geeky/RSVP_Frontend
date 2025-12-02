@@ -63,8 +63,8 @@
           <div class="invite-code-section">
             <label>Event Invite Code</label>
             <div class="invite-code-display">
-              <div class="code">{{ event.inviteCode }}</div>
-              <button class="copy-btn" (click)="copyInviteCode(event.inviteCode)">
+              <div class="code">{{ getInviteLink() }}</div>
+              <button class="copy-btn" (click)="copyInviteCode(getInviteLink())">
                 Copy
               </button>
             </div>
@@ -76,11 +76,12 @@
           
           @if (!editingStatus()) {
             <div class="status-display">
-              <span class="status-badge" [attr.data-status]="event.status">
-                @switch (event.status) {
+              <span class="status-badge" [attr.data-status]="currentStatus()">
+                @switch (currentStatus()) {
                   @case ('Attending') { ✅ Attending }
                   @case ('Maybe') { 🤔 Maybe }
                   @case ('NotAttending') { ❌ Not Attending }
+                  @case ('NoResponse') { ⏳ No Response}
                   @default { ⏳ No Response }
                 }
               </span>
@@ -97,6 +98,7 @@
                 <option value="Attending">✅ Attending</option>
                 <option value="Maybe">🤔 Maybe</option>
                 <option value="NotAttending">❌ Not Attending</option>
+                <option value="NoResponse">⏳ No Response</option>
               </select>
               
               <div class="status-actions">

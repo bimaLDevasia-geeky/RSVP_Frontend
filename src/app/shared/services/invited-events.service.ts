@@ -15,10 +15,13 @@ export class InvitedEventsService {
         return this.http.get<InvitedEventDto[]>(`${environment.apiUrl}/event/invited`);
     }
 
-    updateMyStatus(eventId: number, status: string): Observable<void> {
-        return this.http.patch<void>(`${environment.apiUrl}/attendie/my-status/${eventId}`, { 
+    updateMyStatus(attendeeId: number, status: string): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/attendie/${attendeeId}`, { 
             status 
         });
     }
+    getAttendieViaUserId(eventId: number, userId: number){
+        return this.http.get<any>(`${environment.apiUrl}/attendie/user`,{params: {eventId: eventId, userId: userId}});
+    } 
     
 }

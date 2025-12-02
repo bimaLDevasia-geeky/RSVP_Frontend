@@ -35,6 +35,10 @@ export const routes: Routes = [
    },
 
    {
+    path :"invite/:code",loadComponent:()=>import('./features/user/invite/invite').then(m=>m.Invite)
+   },
+
+   {
     path: '**',
     pathMatch: 'full',
     redirectTo: ''

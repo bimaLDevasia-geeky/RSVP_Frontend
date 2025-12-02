@@ -62,12 +62,27 @@ export interface UpdateEventDto {
     imagesToDelete?: ImageDeleteDto[];
 }
 
-export interface AttendeeDto {
+export interface Attendee {
     id: number;
     name: string;
     email: string;
+    role:'Guest' | 'Organizer';
     status: 'Attending' | 'Maybe' | 'NotAttending' | 'NoResponse';
-   
+    user?: {
+        name:string;
+    }
+}
+
+export interface StatusCountDto {
+    attending: number;
+    maybe: number;
+    notAttending: number;
+    noResponse: number;
+}
+
+export interface AttendeeResponseDto {
+    attendies: Attendee[];
+    statusCounts: StatusCountDto;
 }
 
 export interface EventDetailDto {
@@ -82,7 +97,7 @@ export interface EventDetailDto {
     status: eventStatus;
     inviteCode: string;
     media: EventImageDto[];
-    attendies: AttendeeDto[];
+    attendies: Attendee[];
     createdAt: Date;
 }
 
@@ -101,4 +116,17 @@ export interface GuestDto {
 export interface AddGuestDto {
     eventId: number;
     userId: number;
+}
+
+export interface InvitedEventDto {
+    id: number;
+    name: string;
+    description: string;
+    date: Date;
+    venue: string;
+    time: string;
+    isPublic: boolean;
+    inviteCode: string;
+    media: EventImageDto[];
+    status: 'Attending' | 'Maybe' | 'NotAttending' | 'NoResponse';
 }

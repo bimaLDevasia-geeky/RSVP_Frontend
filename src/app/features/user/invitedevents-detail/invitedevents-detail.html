@@ -1,0 +1,126 @@
+<div class="detail-container">
+  @if (event(); as event) {
+    <div class="detail-card">
+      <button class="back-btn" (click)="goBack()">
+        <span>←</span>
+        <span>Back to Events</span>
+      </button>
+
+      <div class="event-image-section">
+        <div class="main-image">
+          @if (event.media && event.media.length > 0) {
+            <img [src]="event.media[getSelectedImageIndex()].url" [alt]="event.name" />
+          } @else {
+            <div class="no-image">
+              <span>📅</span>
+            </div>
+          }
+        </div>
+
+        @if (event.media && event.media.length > 1) {
+          <div class="thumbnail-strip">
+            @for (image of event.media; track image; let i = $index) {
+              <div 
+                class="thumbnail" 
+                [class.active]="getSelectedImageIndex() === i"
+                (click)="selectImage(i)">
+                <img [src]="image" [alt]="'Image ' + (i + 1)" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="event-content">
+        <div class="event-header">
+          <h1>{{ event.name }}</h1>
+          <span class="event-type" [class.public]="event.isPublic" [class.private]="!event.isPublic">
+            {{ event.isPublic ? 'Public' : 'Private' }}
+          </span>
+        </div>
+
+        <div class="event-details">
+          <div class="detail-item">
+            <span class="icon">📅</span>
+            <span class="text">{{ event.date | date:'fullDate' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">🕐</span>
+            <span class="text">{{ event.time| timeonly }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">📍</span>
+            <span class="text">{{ event.venue }}</span>
+          </div>
+        </div>
+
+        <div class="event-description">
+          <h3>Description</h3>
+          <p>{{ event.description }}</p>
+        </div>
+
+        @if (!event.isPublic) {
+          <div class="invite-code-section">
+            <label>Event Invite Code</label>
+            <div class="invite-code-display">
+              <div class="code">{{ event.inviteCode }}</div>
+              <button class="copy-btn" (click)="copyInviteCode(event.inviteCode)">
+                Copy
+              </button>
+            </div>
+          </div>
+        }
+
+        <div class="status-section">
+          <label>Your RSVP Status</label>
+          
+          @if (!editingStatus()) {
+            <div class="status-display">
+              <span class="status-badge" [attr.data-status]="event.status">
+                @switch (event.status) {
+                  @case ('Attending') { ✅ Attending }
+                  @case ('Maybe') { 🤔 Maybe }
+                  @case ('NotAttending') { ❌ Not Attending }
+                  @default { ⏳ No Response }
+                }
+              </span>
+              <button class="edit-status-btn" (click)="startEditingStatus()">
+                Change Status
+              </button>
+            </div>
+          } @else {
+            <div class="status-edit">
+              <select 
+                class="status-select" 
+                [(ngModel)]="selectedStatus"
+                [disabled]="isUpdatingStatus()">
+                <option value="Attending">✅ Attending</option>
+                <option value="Maybe">🤔 Maybe</option>
+                <option value="NotAttending">❌ Not Attending</option>
+              </select>
+              
+              <div class="status-actions">
+                <button 
+                  class="submit-btn" 
+                  (click)="updateMyStatus()"
+                  [disabled]="isUpdatingStatus()">
+                  {{ isUpdatingStatus() ? 'Updating...' : 'Submit' }}
+                </button>
+                <button 
+                  class="cancel-btn" 
+                  (click)="cancelEditingStatus()"
+                  [disabled]="isUpdatingStatus()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading">
+      <p>Loading event details...</p>
+    </div>
+  }
+</div>

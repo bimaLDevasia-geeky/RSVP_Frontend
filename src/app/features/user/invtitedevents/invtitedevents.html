@@ -1,0 +1,65 @@
+<div class="invited-events-container">
+  <div class="header">
+    <h1>Invited Events</h1>
+    <p class="subtitle">Events you've been invited to</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading invited events...</p>
+    </div>
+  } @else if (invitedEvents().length > 0) {
+    <div class="events-grid">
+      @for (event of invitedEvents(); track event.id) {
+        <div class="event-card" (click)="viewEvent(event.id)">
+          <!-- Event Images -->
+          @if (event.media && event.media.length > 0) {
+            <div class="event-image">
+              <img [src]="event.media[0].url" [alt]="event.name" />
+            </div>
+          } @else {
+            <div class="event-image no-image">
+              <span>📅</span>
+            </div>
+          }
+
+          <!-- Event Info -->
+          <div class="event-content">
+            <div class="event-header">
+              <h2>{{ event.name }}</h2>
+              <span class="event-type" [class.public]="event.isPublic" [class.private]="!event.isPublic">
+                {{ event.isPublic ? 'Public' : 'Private' }}
+              </span>
+            </div>
+
+            <div class="event-details">
+              <div class="detail-item">
+                <span class="icon">📅</span>
+                <span class="text">{{ event.date | date: 'mediumDate' }}</span>
+              </div>
+              
+              <div class="detail-item">
+                <span class="icon">⏰</span>
+                <span class="text">{{ event.time | timeonly }}</span>
+              </div>
+              
+              <div class="detail-item">
+                <span class="icon">📍</span>
+                <span class="text">{{ event.venue }}</span>
+              </div>
+            </div>
+
+            <button class="view-btn">View Details →</button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <p>📭</p>
+      <h3>No Invited Events</h3>
+      <p>You haven't been invited to any events yet</p>
+    </div>
+  }
+</div>

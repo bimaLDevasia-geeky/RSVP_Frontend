@@ -12,7 +12,7 @@ export class Navbar {
   options = [
     { label: 'Dashboard', path: '/' },
     { label: 'My Events', path: '/myevents' },
-    { label: 'Invited Events', path: '/user/invited-events' }
+    { label: 'Invited Events', path: '/invitedevents' }
   ];
 
   isUserMenuOpen = signal(false);

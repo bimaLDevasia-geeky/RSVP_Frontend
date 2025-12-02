@@ -35,9 +35,17 @@
       <button class="back-btn" (click)="goBack()">
         <span>←</span> Back to Events
       </button>
-      <button class="edit-btn" (click)="editEvent()">
-        Edit Event
-      </button>
+      <div class="header-actions">
+        @if (requestsCount() > 0) {
+          <button class="requests-btn" (click)="openRequestsModal()">
+            <span class="requests-badge">{{ requestsCount() }}</span>
+            View Requests
+          </button>
+        }
+        <button class="edit-btn" (click)="editEvent()">
+          Edit Event
+        </button>
+      </div>
     </div>
 
     <!-- Main Content -->
@@ -82,7 +90,45 @@
           <div class="description-card">
             <h3>About this Event</h3>
             <p>{{ eventDetail()!.description }}</p>
+            <span>{{this.eventDetail()!.isPublic?"Public Event":"Private Event"}}</span>
           </div>
+
+          @if (!eventDetail()!.isPublic) {
+            <div class="email-invite-section">
+              <div class="section-header">
+                <h3>Invite by Email</h3>
+                <button 
+                  class="toggle-email-btn" 
+                  (click)="showEmailInvite.set(!showEmailInvite())">
+                  {{ showEmailInvite() ? 'Cancel' : '+ Email Invite' }}
+                </button>
+              </div>
+
+              @if (showEmailInvite()) {
+                <div class="email-invite-form">
+                  <label for="email-invite-textarea">
+                    Enter email addresses (separated by commas)
+                  </label>
+                  <textarea 
+                    id="email-invite-textarea"
+                    class="email-textarea"
+                    placeholder="john@example.com, jane@example.com, alex@example.com"
+                    rows="4"
+                    [value]="emailInviteText()"
+                    (input)="emailInviteText.set($any($event.target).value)">
+                  </textarea>
+                  <button 
+                    class="send-invites-btn"
+                    (click)="sendEmailInvites()"
+                    [disabled]="isSendingEmailInvites() || !emailInviteText().trim()">
+                    {{ isSendingEmailInvites() ? 'Sending...' : 'Send Invites' }}
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+         
         </div>
 
         <!-- Right Column: Invite & Guest Management -->
@@ -229,22 +275,130 @@
           @if (filteredAttendees().length > 0) {
             <div class="attendees-list">
               @for (attendee of filteredAttendees(); track attendee.id) {
-                <div class="attendee-item" (click)="viewAttendee(attendee.id)">
-                  <div class="attendee-info">
-                    <span class="name">{{ attendee.name }}</span>
-                    <span class="email">{{ attendee.email }}</span>
+                <div class="attendee-item-extended" [class.editing]="editingAttendeeId() === attendee.id">
+                  <div class="attendee-main-row">
+                    <div class="attendee-info">
+                      <span class="name">{{ attendee.user?.name || attendee.email }}</span>
+                      <span class="email">{{ attendee.email }}</span>
+                    </div>
+                    <div class="attendee-meta">
+                      <span class="role-badge" [attr.data-role]="attendee.role">
+                        {{ attendee.role }}
+                      </span>
+                      @if (editingAttendeeId() !== attendee.id) {
+                        <span class="rsvp-badge" [attr.data-status]="attendee.status">
+                          {{ attendee.status }}
+                        </span>
+                        <button 
+                          class="edit-status-btn" 
+                          (click)="startEditingStatus(attendee.id, attendee.status, attendee.role)"
+                          title="Edit status">
+                          ✏️ Edit
+                        </button>
+                      }
+                    </div>
                   </div>
-                  <div class="attendee-status">
-                    <span class="rsvp-badge" [attr.data-status]="attendee.status">
-                      {{ attendee.status }}
-                    </span>
-                    
-                  </div>
+                  
+                  @if (editingAttendeeId() === attendee.id) {
+                    <div class="status-edit-row">
+                      <div class="edit-field">
+                        <label for="status-select-{{attendee.id}}">Status:</label>
+                        <select 
+                          id="status-select-{{attendee.id}}"
+                          class="status-select"
+                          [value]="selectedStatus()"
+                          (change)="selectedStatus.set($any($event.target).value)">
+                          <option value="Attending">Attending</option>
+                          <option value="Maybe">Maybe</option>
+                          <option value="NotAttending">Not Attending</option>
+                          <option value="NoResponse">No Response</option>
+                        </select>
+                      </div>
+                      
+                      <div class="edit-field">
+                        <label for="role-select-{{attendee.id}}">Role:</label>
+                        <select 
+                          id="role-select-{{attendee.id}}"
+                          class="role-select"
+                          [value]="selectedRole()"
+                          (change)="selectedRole.set($any($event.target).value)">
+                          <option value="Guest">Guest</option>
+                          <option value="Organizer">Organizer</option>
+                        </select>
+                      </div>
+                      
+                      <div class="edit-actions">
+                        <button 
+                          class="submit-btn" 
+                          (click)="updateAttendeeStatus(attendee.id)"
+                          [disabled]="isUpdatingStatus()">
+                          {{ isUpdatingStatus() ? 'Saving...' : 'Submit' }}
+                        </button>
+                        <button 
+                          class="cancel-btn" 
+                          (click)="cancelEditingStatus()"
+                          [disabled]="isUpdatingStatus()">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  }
                 </div>
               }
             </div>
           } @else {
             <p class="empty-message">No attendees match this filter</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Requests Modal -->
+  @if (showRequestsModal()) {
+    <div class="modal-overlay" (click)="closeRequestsModal()">
+      <div class="modal-content requests-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Pending Requests</h2>
+          <button class="modal-close-btn" (click)="closeRequestsModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          @if (isLoadingRequests()) {
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Loading requests...</p>
+            </div>
+          } @else if (pendingRequests().length > 0) {
+            <div class="requests-list">
+              @for (request of pendingRequests(); track request.id) {
+                <div class="request-item">
+                  <div class="request-info">
+                    <span class="request-name">{{ request.user?.name || 'Unknown User' }}</span>
+                    <span class="request-email">{{ request.user?.email || 'No email' }}</span>
+                    <span class="request-date">{{ request.requestedAt | date: 'short' }}</span>
+                  </div>
+                  <div class="request-actions">
+                    <button 
+                      class="approve-btn"
+                      (click)="approveRequest(request.id)"
+                      [disabled]="processingRequestId() === request.id">
+                      {{ processingRequestId() === request.id ? 'Processing...' : 'Approve' }}
+                    </button>
+                    <button 
+                      class="reject-btn"
+                      (click)="rejectRequest(request.id)"
+                      [disabled]="processingRequestId() === request.id">
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p>No pending requests</p>
+            </div>
           }
         </div>
       </div>

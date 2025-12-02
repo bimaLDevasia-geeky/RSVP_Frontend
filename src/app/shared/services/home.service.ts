@@ -18,7 +18,7 @@ export class HomeService {
   }
 
   updateInvitationStatus(attendieId:number,responseStatus:string):Observable<any>{
-    return this.http.put(`${environment.apiUrl}/attendie/${attendieId}`,{status: responseStatus},{withCredentials:true});
+    return this.http.patch(`${environment.apiUrl}/attendie/${attendieId}`,{status: responseStatus},{withCredentials:true});
   }
 
 

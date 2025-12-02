@@ -23,6 +23,10 @@ export const authInterceptor:HttpInterceptorFn = (req,next) => {
         authreq = addTokenHeader(req,token);
     }
 
+    if(req.url.includes('/refresh')){
+        return next(authreq);
+    }
+
     return next(authreq).pipe(
 
         catchError((error: HttpErrorResponse)=>{

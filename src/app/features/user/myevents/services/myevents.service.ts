@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { CreateEventDto, UpdateEventDto, eventType, EventDetailDto, AddGuestDto, GuestDto, AttendeeDto } from '../../../../shared/types/event.type';
+import { CreateEventDto, UpdateEventDto, eventType, EventDetailDto, AddGuestDto, GuestDto, AttendeeResponseDto } from '../../../../shared/types/event.type';
 
 @Injectable({
   providedIn: 'root'
@@ -77,8 +77,8 @@ export class MyeventsService {
   }
 
   // Guest Management
-  searchGuests(searchTerm: string): Observable<GuestDto[]> {
-    return this.http.get<GuestDto[]>(`${environment.apiUrl}/user/search`, {
+  searchGuests(eventId: number, searchTerm: string): Observable<GuestDto[]> {
+    return this.http.get<GuestDto[]>(`${environment.apiUrl}/event/non-attendies/${eventId}`, {
       params: { term: searchTerm }
     });
   }
@@ -92,7 +92,21 @@ export class MyeventsService {
     return this.http.delete<void>(`${this.apiUrl}/${eventId}/guests/${userId}`);
   }
 
-  getEventAttendees(eventId: number): Observable<AttendeeDto[]> {
-    return this.http.get<AttendeeDto[]>(`${this.apiUrl}/${eventId}/attendees`);
+  getEventAttendees(eventId: number): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/attendie/filter`,{eventId: eventId} );
+  }
+
+  updateAttendeeStatus(eventId: number, attendeeId: number, status: string, role: string): Observable<void> {
+    return this.http.patch<void>(`${environment.apiUrl}/attendie/${attendeeId}`, { 
+      status,
+      role
+    });
+  }
+
+  sendEmailInvites(eventId: number, emails: string[]): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/attendie/bulk`, {
+      eventId,
+      attendieEmails: emails
+    });
   }
 }

@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class Navbar {
   options = [
     { label: 'Dashboard', path: '/' },
-    { label: 'My Events', path: '/user/my-events' },
+    { label: 'My Events', path: '/myevents' },
     { label: 'Invited Events', path: '/user/invited-events' }
   ];
 

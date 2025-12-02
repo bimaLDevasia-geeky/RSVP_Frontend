@@ -8,7 +8,7 @@
 
     <div class="navbar-menu">
         @for (item of options; track $index) {
-      <a routerLink="{{item.path}}" routerLinkActive="active" class="nav-link">
+      <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{exact: item.path === '/'}" class="nav-link">
         {{item.label}}
       </a>
     }

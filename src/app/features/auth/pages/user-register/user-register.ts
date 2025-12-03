@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from   '../../../../core/auth/services/auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 
 export class UserRegister {
-  constructor(private authService: AuthService, private fb: FormBuilder,private router: Router) {}
+  constructor(private authService: AuthService, private fb: FormBuilder,private router: Router,private toastservice: HotToastService) {}
 
   registerForm!: FormGroup;
 
@@ -35,7 +36,7 @@ export class UserRegister {
           this.router.navigate(['/login']);
         },
         error: (error) => {
-          console.error('Registration failed', error);
+          this.toastservice.error('Registration failed.');
         }
       });
 

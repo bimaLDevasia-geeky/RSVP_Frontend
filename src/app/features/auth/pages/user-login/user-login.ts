@@ -44,8 +44,9 @@ constructor(
           this.router.navigate([this.returnUrl]);
           this.toastservice.success('Login Successful!');
         },
-        error: (error:unknown) => {
+        error: (error:any) => {
           console.error('Login failed', error);
+          this.toastservice.error(error.error?.error || 'Login failed. Please try again.');
         }
       });
     }

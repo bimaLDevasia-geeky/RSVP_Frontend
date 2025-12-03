@@ -34,7 +34,7 @@ export interface Event {
   myResponseStatus: 'Attending' | 'NotAttending' | 'Maybe' | 'NoResponse' | null;
   creatorName?: string;
   media?: EventMedia[];
-  isAttendee: boolean;
+//   isAttendee: boolean;
 }
 
 export interface EventMedia {

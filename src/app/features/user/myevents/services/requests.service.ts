@@ -16,8 +16,12 @@ export interface AttendeeRequest {
 }
 
 export interface AttendeeRequestsResponse {
-  requests: AttendeeRequest[];
-  total: number;
+  id: number;
+  eventId: number;
+  userId: number;
+  requestedAt: Date;
+  status: "Pending" | "Accepted" | "Rejected";
+  userName: string;
 }
 
 @Injectable({
@@ -27,15 +31,15 @@ export class RequestsService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/externalrequest`;
 
-  getEventRequests(eventId: number): Observable<AttendeeRequestsResponse> {
-    return this.http.get<AttendeeRequestsResponse>(`${this.apiUrl}/event/${eventId}`);
+  getEventRequests(eventId: number): Observable<AttendeeRequestsResponse[]> {
+    return this.http.get<AttendeeRequestsResponse[]>(`${this.apiUrl}/event/${eventId}`);
   }
 
   approveRequest(requestId: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${requestId}/approve`, {});
+    return this.http.patch<void>(`${this.apiUrl}/${requestId}`, {status: 'Accepted'});
   }
 
   rejectRequest(requestId: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${requestId}/reject`, {});
+    return this.http.patch<void>(`${this.apiUrl}/${requestId}`, {status: 'Rejected'});
   }
 }

@@ -3,16 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MyeventsService } from '../../services/myevents.service';
-import { RequestsService, AttendeeRequest } from '../../services/requests.service';
+import { RequestsService, AttendeeRequest, AttendeeRequestsResponse } from '../../services/requests.service';
 import { EventDetailDto, Attendee, GuestDto } from '../../../../../shared/types/event.type';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { debounceTime, Subject, switchMap, of, take, takeUntil } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
 import { TimeonlyPipe } from '../../../../../shared/pipes/timeonly-pipe';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Chat } from "../chat/chat";
 @Component({
   selector: 'app-eventdetail',
-  imports: [CommonModule, FormsModule,TimeonlyPipe],
+  imports: [CommonModule, FormsModule, TimeonlyPipe, Chat],
   templateUrl: './eventdetail.html',
   styleUrl: './eventdetail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -62,7 +63,7 @@ export class Eventdetail implements OnInit {
   
   // Attendee Requests
   showRequestsModal = signal(false);
-  pendingRequests = signal<AttendeeRequest[]>([]);
+  pendingRequests = signal<AttendeeRequestsResponse[]>([]);
   isLoadingRequests = signal(false);
   processingRequestId = signal<number | null>(null);
   requestsCount = signal(0);
@@ -339,7 +340,7 @@ export class Eventdetail implements OnInit {
   loadRequests(eventId: number): void {
     this.requestsService.getEventRequests(eventId).subscribe({
       next: (response) => {
-        const requests = response?.requests || [];
+        const requests = response || [];
         this.pendingRequests.set(requests.filter(r => r.status === 'Pending'));
         this.requestsCount.set(requests.filter(r => r.status === 'Pending').length);
         console.log('Requests loaded:', requests);
@@ -359,8 +360,8 @@ export class Eventdetail implements OnInit {
       this.isLoadingRequests.set(true);
       this.requestsService.getEventRequests(eventId).subscribe({
         next: (response) => {
-          const requests = response?.requests || [];
-          this.pendingRequests.set(requests.filter(r => r.status === 'Pending'));
+          const requests = response || [];
+          this.pendingRequests.set(requests);
           this.isLoadingRequests.set(false);
         },
         error: (err: any) => {

@@ -1,0 +1,71 @@
+<div class="chat-widget">
+  <!-- Chat Toggle Button -->
+  <button class="chat-toggle-btn" (click)="toggleChat()" [class.open]="isOpen()">
+    @if (!isOpen()) {
+      <span class="chat-icon">💬</span>
+      <span class="chat-text">Event Chat</span>
+    } @else {
+      <span class="close-icon">✕</span>
+    }
+  </button>
+
+  <!-- Chat Window -->
+  @if (isOpen()) {
+    <div class="chat-window">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="header-content">
+          <span class="header-icon">💬</span>
+          <h3>Event Chat</h3>
+        </div>
+        <button class="close-btn" (click)="closeChat()">✕</button>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="chat-messages" #messagesContainer>
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Connecting to chat...</p>
+          </div>
+        } @else if (messages().length > 0) {
+          @for (message of messages(); track message.id) {
+            <div class="message-wrapper" [class.own-message]="isOwnMessage(message)">
+              <div class="message-bubble">
+                @if (!isOwnMessage(message)) {
+                  <div class="message-author">{{ message.userName }}</div>
+                }
+                <div class="message-text">{{ message.message }}</div>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <span class="empty-icon">💭</span>
+            <p>No messages yet</p>
+            <span class="empty-subtitle">Be the first to start the conversation!</span>
+          </div>
+        }
+      </div>
+
+      <!-- Chat Input -->
+      <div class="chat-input-container">
+        <input 
+          type="text"
+          class="chat-input"
+          placeholder="Type a message..."
+          [value]="newMessage()"
+          (input)="newMessage.set($any($event.target).value)"
+          (keypress)="handleKeyPress($event)"
+          [disabled]="isLoading()"
+        />
+        <button 
+          class="send-btn" 
+          (click)="sendMessage()"
+          [disabled]="!newMessage().trim() || isLoading()">
+          <span class="send-icon">➤</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

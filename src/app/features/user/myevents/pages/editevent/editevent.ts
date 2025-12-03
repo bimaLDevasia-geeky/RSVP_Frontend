@@ -71,9 +71,9 @@ export class Editevent implements OnInit {
   }
 
   populateForm(event: EventDetailDto): void {
-    const eventDate = new Date(event.date);
-    const formattedDate = eventDate.toISOString().split('T')[0];
-
+    
+    const formattedDate = event.date.toString().split('T')[0];
+    
     this.eventForm.patchValue({
       name: event.name,
       description: event.description,

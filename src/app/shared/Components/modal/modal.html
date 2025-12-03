@@ -1,8 +1,6 @@
-<div class="container" (click)="onContainerClicked($event)">
-    <div>
-        <div class="modal-header">
-            <h2 class="modal-title">{{modalTitle}}</h2>
-            <button type="button" class="close" (click)="closeModal()">&times;</button>
-        </div>
-    </div>
+<div class="modal-backdrop" (click)="close.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="close.emit()" type="button" title="Close">×</button>
+    <ng-content></ng-content>
+  </div>
 </div>

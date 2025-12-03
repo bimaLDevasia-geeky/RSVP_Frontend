@@ -5,6 +5,7 @@
       <p>Loading event details...</p>
     </div>
   } @else if (eventDetail()) {
+
     <!-- Hero Image Section -->
     @if (eventDetail()!.media.length > 0) {
       <div class="hero-section">
@@ -354,6 +355,11 @@
     </div>
   }
 
+  <!-- Chat Widget -->
+  @if (eventDetail()) {
+    <app-chat [eventId]="eventDetail()!.id"></app-chat>
+  }
+
   <!-- Requests Modal -->
   @if (showRequestsModal()) {
     <div class="modal-overlay" (click)="closeRequestsModal()">
@@ -374,8 +380,7 @@
               @for (request of pendingRequests(); track request.id) {
                 <div class="request-item">
                   <div class="request-info">
-                    <span class="request-name">{{ request.user?.name || 'Unknown User' }}</span>
-                    <span class="request-email">{{ request.user?.email || 'No email' }}</span>
+                    <span class="request-name">{{ request.userName || 'Unknown User' }}</span>
                     <span class="request-date">{{ request.requestedAt | date: 'short' }}</span>
                   </div>
                   <div class="request-actions">

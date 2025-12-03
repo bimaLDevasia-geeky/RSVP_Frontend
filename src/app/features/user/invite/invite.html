@@ -79,7 +79,7 @@
                 </div>  
             }
 
-            @if ((eventDetails.isAttendee || eventDetails.isPublic)&& isLoggedIn) {
+            @if ((eventDetails.attendieId || eventDetails.isPublic)&& isLoggedIn) {
               <div class="status-message status-invited">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -87,7 +87,7 @@
                 <p><strong>You're invited!</strong> Let us know if you're coming.</p>
               </div>
             } 
-            @if((!eventDetails.isAttendee && !eventDetails.isPublic) && isLoggedIn) {
+            @if((!eventDetails.attendieId && !eventDetails.isPublic) && isLoggedIn) {
               <div class="status-message status-request">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -102,15 +102,15 @@
         </div>
 
         <div class="event-actions">
-            @if ((eventDetails.isPublic || eventDetails.isAttendee) && isLoggedIn) {
-          <button class="btn-action btn-accept">
+            @if ((eventDetails.isPublic || eventDetails.attendieId) && isLoggedIn) {
+          <button class="btn-action btn-accept" (click)="changeStatus('Attending')" >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             Attending
           </button>
           
-          <button class="btn-action btn-maybe">
+          <button class="btn-action btn-maybe" (click)="changeStatus('Maybe')">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -118,7 +118,7 @@
             </svg>
             Maybe
           </button>
-          <button class="btn-action btn-decline">
+          <button class="btn-action btn-decline" (click)="changeStatus('NotAttending')">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -126,7 +126,7 @@
             Not Attending
           </button>
         }
-        @if ((!eventDetails.isPublic && !eventDetails.isAttendee) && isLoggedIn) {
+        @if ((!eventDetails.isPublic && !eventDetails.attendieId) && isLoggedIn) {
             <button class="btn-action btn-accept" (click)="request()" [disabled]="isRequestSent()">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>

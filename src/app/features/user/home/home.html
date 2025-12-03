@@ -25,14 +25,14 @@
           <div class="invitation-item">
             <div class="invitation-header" routerLink="/user/event/{{item.id}}">
               <div class="event-info">
-                <h3 class="event-name">{{item.name}}</h3>
-                <span class="event-date">{{item.date | date: 'medium'}}</span>
+                <h3 class="event-name">{{item.eventName}}</h3>
+                <span class="event-date">{{item.eventDate | date: 'medium'}}</span>
               </div>
-              <span class="status-badge" [class]="'status-' + (item.myResponseStatus || 'NoResponse').toLowerCase()">
-                {{item.myResponseStatus === 'NoResponse' || !item.myResponseStatus ? 'Pending' : item.myResponseStatus === 'NotAttending' ? 'Not Attending' : item.myResponseStatus}}
+              <span class="status-badge" [class]="'status-' + (item.status || 'NoResponse').toLowerCase()">
+                {{item.status === 'NoResponse' || !item.status ? 'Pending' : item.status === 'NotAttending' ? 'Not Attending' : item.status}}
               </span>
             </div>
-            @if (item.myResponseStatus === "NoResponse") {
+            @if (item.status === "NoResponse") {
               <div class="invitation-actions">
                 <button class="btn-action btn-accept" (click)="updateInvitationStatus(item.attendieId, 'Attending')">
                   Attending

@@ -20,4 +20,8 @@ export class InviteService {
     return this.http.post(`${environment.apiUrl}/ExternalRequest`, {"eventId": eventId}, { withCredentials: true });
   }
 
+  changeInviteStatus(attendieId:number,status:string){
+    return this.http.patch(`${environment.apiUrl}/Attendie/${attendieId}`,{status:status},{withCredentials:true});
+  }
+
 }

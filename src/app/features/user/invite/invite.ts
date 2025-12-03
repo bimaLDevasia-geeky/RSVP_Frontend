@@ -55,6 +55,21 @@ request(): void {
   }
 }
 
+
+changeStatus(status:string):void{
+  if(this.eventDetails && this.eventDetails.attendieId){
+    this.inviteService.changeInviteStatus(this.eventDetails.attendieId,status).subscribe({
+      next:()=>{
+        this.toast.success('Status updated successfully!');
+        this.goBack();
+      },
+      error:(err)=>{
+        this.toast.error(err.error?.error || 'Failed to update status.');
+      }
+    });
+  }
+}
+
 ngOnInit(): void {
 
   if (this.inviteCode) {

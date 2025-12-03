@@ -21,6 +21,9 @@ export class HomeService {
     return this.http.patch(`${environment.apiUrl}/attendie/${attendieId}`,{status: responseStatus},{withCredentials:true});
   }
 
+  getInvitedEvents():Observable<any>{
+    return this.http.get(`${environment.apiUrl}/Event/InvitedByEmail`,{withCredentials:true});
+  }
 
 
 }

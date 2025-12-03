@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 })
 export class Home {
   userData = signal<UserData | null>(null);
+  invitedEvents = signal<any[]>([]);
   
   currentUser: number;
 
@@ -39,11 +40,11 @@ export class Home {
     );
   });
 
-  invitedEvents = computed(() => {
-    const data = this.userData();
-    if (!data || !data.invitedEvents) return [];
-    return [...data.invitedEvents]
-  });
+  // invitedEvents = computed(() => {
+  //   const data = this.userData();
+  //   if (!data || !data.invitedEvents) return [];
+  //   return [...data.invitedEvents]
+  // });
 
 organizedEvents = computed(() => {
     const data = this.userData();
@@ -52,6 +53,9 @@ organizedEvents = computed(() => {
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
   });
+
+
+
 
   constructor(private homeService: HomeService, private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser()?.id || 0;
@@ -79,6 +83,15 @@ organizedEvents = computed(() => {
       },
       error: (error) => {
         console.error('Error retrieving user data:', error);
+      },
+    });
+
+    this.homeService.getInvitedEvents().subscribe({
+      next: (data: any[]) => {
+        this.invitedEvents.set(data);
+      },
+      error: (error) => {
+        console.error('Error retrieving invited events:', error);
       },
     });
   }

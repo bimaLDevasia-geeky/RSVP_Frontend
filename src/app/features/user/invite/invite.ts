@@ -6,10 +6,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { TimeonlyPipe } from "../../../shared/pipes/timeonly-pipe";
+import { Navbar } from '../../../shared/Components/navbar/navbar';
 
 @Component({
   selector: 'app-invite',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, TimeonlyPipe,Navbar],
   templateUrl: './invite.html',
   styleUrl: './invite.scss',
 })
@@ -52,6 +54,21 @@ request(): void {
           this.isRequestSent.set(true);
         }
       });
+  }
+}
+
+
+changeStatus(status:string):void{
+  if(this.eventDetails && this.eventDetails.attendieId){
+    this.inviteService.changeInviteStatus(this.eventDetails.attendieId,status).subscribe({
+      next:()=>{
+        this.toast.success('Status updated successfully!');
+        // this.goBack();
+      },
+      error:(err)=>{
+        this.toast.error(err.error?.error || 'Failed to update status.');
+      }
+    });
   }
 }
 

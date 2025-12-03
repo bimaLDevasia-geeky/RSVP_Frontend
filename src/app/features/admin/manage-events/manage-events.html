@@ -1,0 +1,125 @@
+<div class="manage-events-container">
+  <div class="page-header">
+    <h1 class="page-title">Manage Events</h1>
+    <p class="page-subtitle">View and manage all events</p>
+  </div>
+  
+  <div class="table-container">
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date & Time</th>
+          <th>Venue</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of AllEvents; track item.id) {
+          <tr>
+            <td>
+              <div class="event-cell">
+                @if (item.media && item.media.length > 0) {
+                  <div class="event-image" [style.background-image]="'url(' + item.media[0].url + ')'"></div>
+                } @else {
+                  <div class="event-image event-image-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                }
+                <div class="event-info">
+                  <span class="event-name">{{item.name}}</span>
+                  <span class="event-description">{{item.description}}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="date-time-cell">
+                <span class="event-date">{{item.date | date:'MMM dd, yyyy'}}</span>
+                <span class="event-time">{{item.time}}</span>
+              </div>
+            </td>
+            <td class="venue-cell">{{item.venue}}</td>
+            <td>
+              <span class="type-badge" [class]="item.isPublic ? 'type-public' : 'type-private'">
+                {{item.isPublic ? 'Public' : 'Private'}}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="'status-' + (item.status || 'active').toLowerCase()">
+                {{item.status || 'Active'}}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-edit" title="Update Status" (click)="openStatusModal(item.id, item.name, item.status)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">📅</span>
+                <p class="empty-text">No events found</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (showModal()) {
+  <app-modal (close)="closeModal()">
+    <div class="status-modal">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
+      
+      <h2 class="modal-title">Update Event Status</h2>
+      
+      <p class="modal-message">
+        Update the status for <strong>{{selectedEventName()}}</strong>
+      </p>
+      
+      <div class="form-group">
+        <label for="status-select" class="form-label">Select Status</label>
+        <select 
+          id="status-select" 
+          class="status-select" 
+          [(ngModel)]="selectedStatus"
+        >
+          @for (status of statusOptions; track status) {
+            <option [value]="status">{{status}}</option>
+          }
+        </select>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeModal()">
+          Cancel
+        </button>
+        <button class="btn-confirm" (click)="confirmStatusUpdate()">
+          Update Status
+        </button>
+      </div>
+    </div>
+  </app-modal>
+}

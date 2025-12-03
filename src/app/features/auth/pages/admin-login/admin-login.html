@@ -1,1 +1,8 @@
-<p>admin-login works!</p>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+    <input type="text" placeholder="Admin Username" formControlName="email" />
+    <input type="password" placeholder="Password" formControlName="password" />
+    <button type="submit" [disabled]="loginForm.invalid">Sign In</button>
+
+     
+</form>

@@ -1,21 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-modal',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './modal.html',
-  styleUrl: './modal.scss',
+  styleUrls: ['./modal.scss']
 })
-export class Modal {
-  modalTitle: string = 'Modal Title';
-
-  closeModal(): void {
-    this.onContainerClicked
-    // Logic to close the modal
-  }
-  onContainerClicked(event: MouseEvent): void {
-    if ((<HTMLElement>event.target).classList.contains('container')) {
-      this.closeModal();
-    }
-  }
+export class ModalComponent {
+  @Output() close = new EventEmitter<void>();
 }

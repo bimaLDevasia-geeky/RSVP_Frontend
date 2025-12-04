@@ -28,6 +28,11 @@ export class Addevent {
   imagePreviews = signal<ImagePreview[]>([]);
   isSubmitting = signal<boolean>(false);
 
+  oneDay=24*60*60*1000;
+  minDate = new Date(Date.now() + this.oneDay).toISOString().split('T')[0];
+
+
+
   eventForm: FormGroup = this.fb.group({
     name: ['', Validators.required],
     description: ['', Validators.required],

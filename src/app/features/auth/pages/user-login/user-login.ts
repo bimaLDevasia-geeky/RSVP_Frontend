@@ -41,7 +41,7 @@ constructor(
       this.authService.login(email, password).subscribe({
         next: (response:unknown) => {
           console.log('Login successful', response);
-          this.router.navigate([this.returnUrl]);
+          this.router.navigateByUrl(this.returnUrl || '/');
           this.toastservice.success('Login Successful!');
         },
         error: (error:any) => {

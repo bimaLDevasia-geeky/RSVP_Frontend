@@ -83,7 +83,7 @@
         @if (createdEvents().length === 0) {
           <div class="empty-state">
             <p>No events created yet</p>
-            <button class="btn-create">Create Event</button>
+            <button class="btn-create" routerLink="myevents/addevent">Create Event</button>
           </div>
         }
         @for (item of createdEvents(); track $index) {
